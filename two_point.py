@@ -4,7 +4,7 @@ class TwoPointCrossoverScene(Scene):
     genome_length = 10
     gene_stroke_width = 2
     gene_fill_opacity = 0.8
-    square_buffer = 0.05
+    square_buffer = 0.1
 
     def construct(self):
         # 1. Define parameters
@@ -83,12 +83,12 @@ class TwoPointCrossoverScene(Scene):
         self.wait(1)
 
     def build_genomes(self):
-        parent_1_color: ManimColor = BLUE_C
-        parent_2_color: ManimColor = GREEN_C
+        parent_1_color: ManimColor = BLUE_E
+        parent_2_color: ManimColor = ORANGE
         parent_gene_stroke_color: ManimColor = BLACK
 
         child_fill_color_initial: ManimColor = BLACK
-        child_stroke_color_initial: ManimColor = WHITE
+        child_stroke_color_initial: ManimColor = BLACK
 
         # 2. Create Parent and Child Genome Mobjects
         parent1_genes: VGroup = self.build_genome(parent_1_color, parent_gene_stroke_color)
