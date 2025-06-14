@@ -53,6 +53,10 @@ class TwoPointCrossoverScene(Scene):
         if cp1_idx > 0:
             animations_seg1 = []
             for i in range(cp1_idx):
+                # Set the child genome square to have the same color, etc., as the parent genome.
+                # We have to set `match_center` to `True` or it will also set the child's position
+                # to match parent, and nothing in the animation.
+                child_genes[i].become(parent1_genes[i], match_center=True)
                 # child_genes[i] (target) transforms from a copy of parent1_genes[i] (source)
                 animations_seg1.append(TransformFromCopy(parent1_genes[i], child_genes[i]))
             self.play(AnimationGroup(*animations_seg1, lag_ratio=0.1))
@@ -62,6 +66,7 @@ class TwoPointCrossoverScene(Scene):
         if cp2_idx > cp1_idx:
             animations_seg2 = []
             for i in range(cp1_idx, cp2_idx):
+                child_genes[i].become(parent2_genes[i], match_center=True)
                 animations_seg2.append(TransformFromCopy(parent2_genes[i], child_genes[i]))
             self.play(AnimationGroup(*animations_seg2, lag_ratio=0.1))
             self.wait(0.5)
@@ -70,6 +75,7 @@ class TwoPointCrossoverScene(Scene):
         if cp2_idx < self.genome_length:
             animations_seg3 = []
             for i in range(cp2_idx, self.genome_length):
+                child_genes[i].become(parent1_genes[i], match_center=True)
                 animations_seg3.append(TransformFromCopy(parent1_genes[i], child_genes[i]))
             self.play(AnimationGroup(*animations_seg3, lag_ratio=0.1))
 
