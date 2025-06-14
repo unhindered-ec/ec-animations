@@ -22,25 +22,29 @@ class TwoPointCrossoverScene(Scene):
 
         if 0 < cp1_idx <= self.genome_length:
             cp1_x = (parent1_genes[cp1_idx-1].get_right()[0] + parent1_genes[cp1_idx].get_left()[0]) / 2
-            cp1_line = DashedLine(Point(np.array([cp1_x, cp_line_y_start, 0])), Point(np.array([cp1_x, cp_line_y_end, 0])), color=YELLOW)
-            cp1_text = Text("CP1", font_size=24).move_to(Point(np.array([cp1_x, cp_line_y_start + 0.3, 0])))
-            self.play(Create(cp1_line), Write(cp1_text))
+            cp1_line = DashedLine(Point(np.array([cp1_x, cp_line_y_start, 0])), Point(np.array([cp1_x, cp_line_y_end, 0])), color=YELLOW, dash_length=0.15, dashed_ratio=0.70)
+            cp1_text = Text("Crossover Point 1", font_size=24).move_to(Point(np.array([cp1_x, cp_line_y_start + 0.3, 0])))
+            self.add(cp1_text)
+            self.play(Create(cp1_line))
         elif cp1_idx == 0:
-            cp1_x = parent1_genes[0].get_left()[0] - self.square_buffer / 2 #  (parent1_genes[0].width / 2 + 0.05)
-            cp1_line = DashedLine(Point(np.array([cp1_x, cp_line_y_start, 0])), Point(np.array([cp1_x, cp_line_y_end, 0])), color=YELLOW)
-            cp1_text = Text("CP1", font_size=24).move_to(Point(np.array([cp1_x, cp_line_y_start + 0.3, 0])))
-            self.play(Create(cp1_line), Write(cp1_text))
+            cp1_x = parent1_genes[0].get_left()[0] - self.square_buffer / 2
+            cp1_line = DashedLine(Point(np.array([cp1_x, cp_line_y_start, 0])), Point(np.array([cp1_x, cp_line_y_end, 0])), color=YELLOW, dash_length=0.15, dashed_ratio=0.70)
+            cp1_text = Text("Crossover Point 1", font_size=24).move_to(Point(np.array([cp1_x, cp_line_y_start + 0.3, 0])))
+            self.add(cp1_text)
+            self.play(Create(cp1_line))
 
         if cp1_idx < cp2_idx < self.genome_length:
             cp2_x = (parent1_genes[cp2_idx-1].get_right()[0] + parent1_genes[cp2_idx].get_left()[0]) / 2
-            cp2_line = DashedLine(Point(np.array([cp2_x, cp_line_y_start, 0])), Point(np.array([cp2_x, cp_line_y_end, 0])), color=YELLOW)
-            cp2_text = Text("CP2", font_size=24).move_to(Point(np.array([cp2_x, cp_line_y_start + 0.3, 0])))
-            self.play(Create(cp2_line), Write(cp2_text))
+            cp2_line = DashedLine(Point(np.array([cp2_x, cp_line_y_start, 0])), Point(np.array([cp2_x, cp_line_y_end, 0])), color=YELLOW, dash_length=0.15, dashed_ratio=0.70)
+            cp2_text = Text("Crossover Point 2", font_size=24).move_to(Point(np.array([cp2_x, cp_line_y_start + 0.3, 0])))
+            self.add(cp2_text)
+            self.play(Create(cp2_line))
         elif cp2_idx == self.genome_length and cp1_idx < cp2_idx:
-            cp2_x = parent1_genes[self.genome_length-1].get_right()[0] + self.square_buffer / 2 # (parent1_genes[genome_length-1].width / 2 + 0.05)
-            cp2_line = DashedLine(Point(np.array([cp2_x, cp_line_y_start, 0])), Point(np.array([cp2_x, cp_line_y_end, 0])), color=YELLOW)
-            cp2_text = Text("CP2", font_size=24).move_to(Point(np.array([cp2_x, cp_line_y_start + 0.3, 0])))
-            self.play(Create(cp2_line), Write(cp2_text))
+            cp2_x = parent1_genes[self.genome_length-1].get_right()[0] + self.square_buffer / 2
+            cp2_line = DashedLine(Point(np.array([cp2_x, cp_line_y_start, 0])), Point(np.array([cp2_x, cp_line_y_end, 0])), color=YELLOW, dash_length=0.15, dashed_ratio=0.70)
+            cp2_text = Text("Crossover Point 2", font_size=24).move_to(Point(np.array([cp2_x, cp_line_y_start + 0.3, 0])))
+            self.add(cp2_text)
+            self.play(Create(cp2_line))
 
         self.wait(0.5) # Shorter wait
 
