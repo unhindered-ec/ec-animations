@@ -10,6 +10,10 @@ computation.
 
 ![](animations/TwoPointCrossoverScene_ManimCE_v0.19.0.gif)
 
+## Animated GIF created with `ffmpeg`
+
+![](animations/two_point_ffmpeg.gif)
+
 ## FFMPEG with 2M bitrate
 
 <video width="320" height="240" controls autoplay loop> <source src="animations/output.webm" type="video/webm; codecs='vp9'"> Your browser does not support the video tag. </video>
