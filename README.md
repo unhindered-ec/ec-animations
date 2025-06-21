@@ -21,3 +21,7 @@ computation.
 ## FFMPEG with 15K bitrate
 
 <video width="320" height="240" controls autoplay loop> <source src="animations/output_15K.webm" type="video/webm; codecs='vp9'"> Your browser does not support the video tag. </video>
+
+[output_15K.webm](animations/output_15K.webm)
+
+[output_15K.webm with frogs](https://github.com/user-attachments/assets/7cd28f9a-8a49-4b55-af4b-03f7e4e12d84)
