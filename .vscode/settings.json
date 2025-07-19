@@ -4,5 +4,11 @@
         "Manim",
         "Mobjects",
         "ndarray"
-    ]
+    ],
+    // Path to the Manim executable for Manim Sideview.
+    // For reasons unknown, the plugin requires this specific relative path '../../manim'
+    // instead of './.venv/bin/manim' when using uv/virtual environments.
+    // It appears to resolve paths relative to the activated Python interpreter's parent directory,
+    // or from some other internal base.
+    "manim-sideview.defaultManimPath": "../../manim"
 }
