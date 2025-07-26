@@ -1,6 +1,7 @@
+from typing import Optional
 from manim import * # type: ignore
 
-class TwoPointCrossoverScene(Scene):
+class NPointCrossoverScene(Scene):
     # --- CONFIGURATION ---
     # Genome settings
     GENOME_LENGTH: int = 10
@@ -22,8 +23,7 @@ class TwoPointCrossoverScene(Scene):
     LABEL_FONT_SIZE: int = 36
 
     # Crossover settings
-    CROSSOVER_POINT_1_INDEX: int = 2
-    CROSSOVER_POINT_2_INDEX: int = 6
+    CROSSOVER_POINTS: list[int] = [2, 6]
     CROSSOVER_LINE_COLOR: ManimColor = YELLOW
     CROSSOVER_LINE_DASH_LENGTH: float = 0.15
     CROSSOVER_LINE_DASH_RATIO: float = 0.70
@@ -33,10 +33,6 @@ class TwoPointCrossoverScene(Scene):
 
     # Animation settings
     ANIMATION_COPY_LAG_RATIO: float = 0.1
-
-    # Crossover points are located *before* the genes at the specified indices.
-    # The code assumes `0 ≤ CROSSOVER_POINT_1_INDEX < CROSSOVER_POINT_2_INDEX ≤ GENOME_LENGTH`.
-    assert 0 <= CROSSOVER_POINT_1_INDEX < CROSSOVER_POINT_2_INDEX <= GENOME_LENGTH, "Crossover points are not valid."
 
     def setup(self):
         """
@@ -53,10 +49,18 @@ class TwoPointCrossoverScene(Scene):
             self.p2_label,
             self.child_label,
         ) = self.build_genomes()
+
+        # The crossover points must be sorted and unique, and within the valid range of the genome.
+        # Crossover points are located *before* the genes at the specified indices.
+        assert self.CROSSOVER_POINTS == sorted(list(set(self.CROSSOVER_POINTS))), \
+            "CROSSOVER_POINTS must be sorted and contain unique values."
+        assert all(0 <= cp <= self.GENOME_LENGTH for cp in self.CROSSOVER_POINTS), \
+            "All crossover points must be within the range [0, GENOME_LENGTH]."
+
         super().setup()
 
     def construct(self):
-        """Defines the animation sequence for the two-point crossover."""
+        """Defines the animation sequence for N-point crossover."""
         # Group all genomes and labels, center them, and add them to the scene.
         all_mobjects = VGroup(
             self.parent1_genes, self.parent2_genes, self.child_genes,
@@ -66,27 +70,30 @@ class TwoPointCrossoverScene(Scene):
         self.wait(0.5)
 
         # Visualize the crossover points
-        cp1_line, cp1_text = self.visualize_crossover_point(self.CROSSOVER_POINT_1_INDEX, "Crossover Point 1")
-        cp2_line, cp2_text = self.visualize_crossover_point(self.CROSSOVER_POINT_2_INDEX, "Crossover Point 2")
+        crossover_lines = VGroup()
+        crossover_texts = VGroup()
+        for index, crossover_point in enumerate(self.CROSSOVER_POINTS):
+            label = f"Crossover Point {index + 1}"
+            cp_line, cp_text = self.visualize_crossover_point(crossover_point, label)
+            crossover_lines.add(cp_line)
+            if cp_text is not None:
+                crossover_texts.add(cp_text)
 
-        self.add(cp1_text, cp2_text)
-        self.play(Create(cp1_line), Create(cp2_line))
+        print(f"The number of text labels is {len(crossover_texts)}")
+        self.add(crossover_texts) # Add texts instantly
+        self.play(Create(crossover_lines)) # Animate creation of all lines together
         self.wait(0.5)
 
-        # Animate the gene copying process using TransformFromCopy.
-        # Segment 1: From Parent 1 (indices 0 to CROSSOVER_POINT_1_INDEX - 1)
-        if self.CROSSOVER_POINT_1_INDEX > 0:
-            self.copy_genes(self.parent1_genes, self.child_genes, range(self.CROSSOVER_POINT_1_INDEX))
-            self.wait(0.5)
+        # Animate the gene copying process.
 
-        # Segment 2: From Parent 2 (indices CROSSOVER_POINT_1_INDEX to CROSSOVER_POINT_2_INDEX - 1)
-        if self.CROSSOVER_POINT_2_INDEX > self.CROSSOVER_POINT_1_INDEX:
-            self.copy_genes(self.parent2_genes, self.child_genes, range(self.CROSSOVER_POINT_1_INDEX, self.CROSSOVER_POINT_2_INDEX))
+        previous_crossover = 0
+        parents = [self.parent1_genes, self.parent2_genes]
+        # Add `self.GENOME_LENGTH` as a implied crossover point at the end.
+        for index, crossover_point in enumerate(self.CROSSOVER_POINTS + [self.GENOME_LENGTH]):
+            # Copy the genes for a given segment from the appropriate parent to the child.
+            self.copy_genes(parents[index % 2], self.child_genes, range(previous_crossover, crossover_point))
             self.wait(0.5)
-
-        # Segment 3: From Parent 1 (indices CROSSOVER_POINT_2_INDEX to GENOME_LENGTH - 1)
-        if self.CROSSOVER_POINT_2_INDEX < self.GENOME_LENGTH:
-            self.copy_genes(self.parent1_genes, self.child_genes, range(self.CROSSOVER_POINT_2_INDEX, self.GENOME_LENGTH))
+            previous_crossover = crossover_point
 
         # Final wait
         self.wait(1)
@@ -123,7 +130,7 @@ class TwoPointCrossoverScene(Scene):
             for _ in range(self.GENOME_LENGTH)
         ]).arrange(RIGHT, buff=self.GENOME_BUFFER)
 
-    def visualize_crossover_point(self, gap_index: int, label: str) -> tuple[DashedLine, Text]:
+    def visualize_crossover_point(self, gap_index: int, label: Optional[str]) -> tuple[DashedLine, Optional[Text]]:
         """
         Creates the dashed line and label for a crossover point.
 
@@ -134,7 +141,7 @@ class TwoPointCrossoverScene(Scene):
         Returns:
             A tuple containing the DashedLine and Text mobjects.
         """
-        # Specify the y-coordinates for the top and bottom of the crossover line.
+        # Specify the y-coordinates for the top and bottom of the crossover line
         cp_line_y_start = self.parent1_genes.get_top()[1] + self.CROSSOVER_LINE_Y_PADDING
         cp_line_y_end = self.child_genes.get_bottom()[1] - self.CROSSOVER_LINE_Y_PADDING
 
@@ -152,9 +159,7 @@ class TwoPointCrossoverScene(Scene):
             dash_length=self.CROSSOVER_LINE_DASH_LENGTH,
             dashed_ratio=self.CROSSOVER_LINE_DASH_RATIO
         )
-        text = Text(label, font_size=self.CROSSOVER_LABEL_FONT_SIZE).move_to(
-            Point(np.array([x_coordinate, cp_line_y_start + self.CROSSOVER_LABEL_Y_OFFSET, 0]))
-        )
+        text = Text(label, font_size=self.CROSSOVER_LABEL_FONT_SIZE).next_to(line, UP) if label else None
         return line, text
 
     def copy_genes(self, from_genes: VGroup, to_genes: VGroup, gene_range: range):
