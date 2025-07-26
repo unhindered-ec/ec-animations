@@ -52,8 +52,8 @@ class NPointCrossoverScene(Scene):
 
         # The crossover points must be sorted and unique, and within the valid range of the genome.
         # Crossover points are located *before* the genes at the specified indices.
-        assert self.CROSSOVER_POINTS == sorted(list(set(self.CROSSOVER_POINTS))), \
-            "CROSSOVER_POINTS must be sorted and contain unique values."
+        assert len(self.CROSSOVER_POINTS) == len(set(self.CROSSOVER_POINTS)), "CROSSOVER_POINTS must contain unique values."
+        assert self.CROSSOVER_POINTS == sorted(self.CROSSOVER_POINTS), "CROSSOVER_POINTS must be sorted."
         assert all(0 <= cp <= self.GENOME_LENGTH for cp in self.CROSSOVER_POINTS), \
             "All crossover points must be within the range [0, GENOME_LENGTH]."
 
@@ -79,7 +79,6 @@ class NPointCrossoverScene(Scene):
             if cp_text is not None:
                 crossover_texts.add(cp_text)
 
-        print(f"The number of text labels is {len(crossover_texts)}")
         self.add(crossover_texts) # Add texts instantly
         self.play(Create(crossover_lines)) # Animate creation of all lines together
         self.wait(0.5)
