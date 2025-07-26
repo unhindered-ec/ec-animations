@@ -34,8 +34,8 @@ class TwoPointCrossoverScene(Scene):
     # Animation settings
     ANIMATION_COPY_LAG_RATIO: float = 0.1
 
-    # The two crossover points will be to the _right_ of the genes
-    # with the following indices. The code assumes `0 ≤ CROSSOVER_POINT_1_INDEX < CROSSOVER_POINT_2_INDEX ≤ GENOME_LENGTH`.
+    # Crossover points are located *before* the genes at the specified indices.
+    # The code assumes `0 ≤ CROSSOVER_POINT_1_INDEX < CROSSOVER_POINT_2_INDEX ≤ GENOME_LENGTH`.
     assert 0 <= CROSSOVER_POINT_1_INDEX < CROSSOVER_POINT_2_INDEX <= GENOME_LENGTH, "Crossover points are not valid."
 
     def setup(self):
@@ -104,13 +104,13 @@ class TwoPointCrossoverScene(Scene):
         """
         parent1_genes: VGroup = self.build_genome(self.FIRST_PARENT_COLOR, self.PARENT_STROKE_COLOR)
         parent2_genes: VGroup = self.build_genome(self.SECOND_PARENT_COLOR, self.PARENT_STROKE_COLOR)
-        child_genes: VGroup   = self.build_genome(self.CHILD_INITIAL_FILL_COLOR, self.CHILD_INITIAL_STROKE_COLOR)
+        child_genes: VGroup = self.build_genome(self.CHILD_INITIAL_FILL_COLOR, self.CHILD_INITIAL_STROKE_COLOR)
 
         # Arrange genomes vertically. This modifies the mobjects in place.
         VGroup(parent1_genes, parent2_genes, child_genes).arrange(DOWN, buff=self.GENOMES_VERTICAL_BUFFER)
 
-        p1_label: Text    = Text("Parent 1", font_size=self.LABEL_FONT_SIZE).next_to(parent1_genes, LEFT, buff=self.LABEL_BUFFER)
-        p2_label: Text    = Text("Parent 2", font_size=self.LABEL_FONT_SIZE).next_to(parent2_genes, LEFT, buff=self.LABEL_BUFFER)
+        p1_label: Text = Text("Parent 1", font_size=self.LABEL_FONT_SIZE).next_to(parent1_genes, LEFT, buff=self.LABEL_BUFFER)
+        p2_label: Text = Text("Parent 2", font_size=self.LABEL_FONT_SIZE).next_to(parent2_genes, LEFT, buff=self.LABEL_BUFFER)
         child_label: Text = Text("Child", font_size=self.LABEL_FONT_SIZE).next_to(child_genes, LEFT, buff=self.LABEL_BUFFER)
 
         return parent1_genes, parent2_genes, child_genes, p1_label, p2_label, child_label
@@ -128,7 +128,7 @@ class TwoPointCrossoverScene(Scene):
         Creates the dashed line and label for a crossover point.
 
         Args:
-            gap_index: The index of the gene to the right of the crossover point.
+            gap_index: The index of the first gene immediately after the crossover point.
             label: The text to display for the crossover point label.
 
         Returns:
@@ -136,7 +136,7 @@ class TwoPointCrossoverScene(Scene):
         """
         # Specify the y-coordinates for the top and bottom of the crossover line.
         cp_line_y_start = self.parent1_genes.get_top()[1] + self.CROSSOVER_LINE_Y_PADDING
-        cp_line_y_end   = self.child_genes.get_bottom()[1] - self.CROSSOVER_LINE_Y_PADDING
+        cp_line_y_end = self.child_genes.get_bottom()[1] - self.CROSSOVER_LINE_Y_PADDING
 
         if gap_index < self.GENOME_LENGTH:
             # Set the x-coordinate of the crossover line to be a little to the left of the gene at `gap_index`.
