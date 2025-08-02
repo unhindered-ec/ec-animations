@@ -1,4 +1,5 @@
 from typing import Optional
+from typing import cast
 from manim import * # type: ignore
 
 class NPointCrossoverScene(Scene):
@@ -23,16 +24,18 @@ class NPointCrossoverScene(Scene):
     LABEL_FONT_SIZE: int = 36
 
     # Crossover settings
-    CROSSOVER_POINTS: list[int] = [2, 6]
+    CROSSOVER_POINTS: list[int] = [2, 6, 7]
     CROSSOVER_LINE_COLOR: ManimColor = YELLOW
     CROSSOVER_LINE_DASH_LENGTH: float = 0.15
     CROSSOVER_LINE_DASH_RATIO: float = 0.70
-    CROSSOVER_LABEL_FONT_SIZE: int = 24
+    CROSSOVER_LABEL_FONT_SIZE: int = 36
     CROSSOVER_LINE_Y_PADDING: float = 0.1
     CROSSOVER_LABEL_Y_OFFSET: float = 0.3
+    CROSSOVER_RAY_COLOR: ManimColor = YELLOW
 
     # Animation settings
-    ANIMATION_COPY_LAG_RATIO: float = 0.1
+    CROSSOVER_POINT_LAG_RATIO = 0.5
+    GENE_COPY_LAG_RATIO: float = 0.1
 
     def setup(self):
         """
@@ -67,20 +70,30 @@ class NPointCrossoverScene(Scene):
             self.p1_label, self.p2_label, self.child_label
         ).center()
         self.add(all_mobjects)
+
+        crossover_lines, crossover_text, crossover_rays = self.build_crossover_visualization()
+
+        self.add(VGroup(crossover_text)) # Add texts instantly
+
         self.wait(0.5)
 
-        # Visualize the crossover points
-        crossover_lines = VGroup()
-        crossover_texts = VGroup()
-        for index, crossover_point in enumerate(self.CROSSOVER_POINTS):
-            label = f"Crossover Point {index + 1}"
-            cp_line, cp_text = self.visualize_crossover_point(crossover_point, label)
-            crossover_lines.add(cp_line)
-            if cp_text is not None:
-                crossover_texts.add(cp_text)
+        if len(crossover_lines) == 1:
+            self.play(Create(cast(VMobject, crossover_lines[0])))
+        else:
+            self.play(
+                AnimationGroup(
+                    [
+                        AnimationGroup(
+                            ShowPassingFlash(ray, run_time=1, time_width=0.5),
+                            Create(line),
+                            lag_ratio=1
+                        )
+                        for (line, ray) in zip(crossover_lines, crossover_rays)
+                    ],
+                    lag_ratio=self.CROSSOVER_POINT_LAG_RATIO
+                )
+            )
 
-        self.add(crossover_texts) # Add texts instantly
-        self.play(Create(crossover_lines)) # Animate creation of all lines together
         self.wait(0.5)
 
         # Animate the gene copying process.
@@ -96,6 +109,44 @@ class NPointCrossoverScene(Scene):
 
         # Final wait
         self.wait(1)
+
+    def build_crossover_visualization(self) -> tuple[VGroup, Text, VGroup]:
+        """
+        Builds the crossover point visualization objects.
+
+        This method creates the visual representations of
+
+        - The crossover points (as a `VGroup` of dashed lines)
+        - The label for the crossover points (as a `Text` MObject)
+        - The rays connecting the label to the crossover points (as a `VGroup` of lines)
+
+        Returns:
+            A tuple containing the mobjects for the crossover point dashed lines,
+            the label, and the mobjects for the rays.
+        """
+        crossover_lines = VGroup()
+        crossover_rays = VGroup()
+
+        for index, crossover_point in enumerate(self.CROSSOVER_POINTS):
+            dashed_line = self.visualize_crossover_point(crossover_point)
+            crossover_lines.add(dashed_line)
+
+        num_crossover_points = len(self.CROSSOVER_POINTS)
+        if num_crossover_points == 1:
+            label = "Crossover point"
+            text = Text(label, font_size=self.CROSSOVER_LABEL_FONT_SIZE).next_to(crossover_lines[0], UP)
+            crossover_text = text
+        else:
+            label = "Crossover points"
+            text = Text(label, font_size=self.CROSSOVER_LABEL_FONT_SIZE).next_to(self.parent1_genes, UP, buff=1)
+            crossover_text = text
+            for line in crossover_lines:
+                start = text.get_bottom()
+                end = line.get_top()
+                ray = Line(start, end, color = self.CROSSOVER_RAY_COLOR)
+                crossover_rays.add(ray)
+
+        return crossover_lines, crossover_text, crossover_rays
 
     def build_genomes(self) -> tuple[VGroup, VGroup, VGroup, Text, Text, Text]:
         """
@@ -129,16 +180,16 @@ class NPointCrossoverScene(Scene):
             for _ in range(self.GENOME_LENGTH)
         ]).arrange(RIGHT, buff=self.GENOME_BUFFER)
 
-    def visualize_crossover_point(self, gap_index: int, label: Optional[str]) -> tuple[DashedLine, Optional[Text]]:
+    def visualize_crossover_point(self, gap_index: int) -> DashedLine:
         """
-        Creates the dashed line and label for a crossover point.
+        Creates the dashed line for a crossover point.
 
         Args:
             gap_index: The index of the first gene immediately after the crossover point.
             label: The text to display for the crossover point label.
 
         Returns:
-            A tuple containing the DashedLine and Text mobjects.
+            The DashedLine Text mobject.
         """
         # Specify the y-coordinates for the top and bottom of the crossover line
         cp_line_y_start = self.parent1_genes.get_top()[1] + self.CROSSOVER_LINE_Y_PADDING
@@ -158,8 +209,7 @@ class NPointCrossoverScene(Scene):
             dash_length=self.CROSSOVER_LINE_DASH_LENGTH,
             dashed_ratio=self.CROSSOVER_LINE_DASH_RATIO
         )
-        text = Text(label, font_size=self.CROSSOVER_LABEL_FONT_SIZE).next_to(line, UP) if label else None
-        return line, text
+        return line
 
     def copy_genes(self, from_genes: VGroup, to_genes: VGroup, gene_range: range):
         """
@@ -177,4 +227,4 @@ class NPointCrossoverScene(Scene):
             # be set to match the parent's, and the gene will not appear to move.
             to_genes[i].become(from_genes[i], match_center=True)
             animations.append(TransformFromCopy(from_genes[i], to_genes[i]))
-        self.play(AnimationGroup(*animations, lag_ratio=self.ANIMATION_COPY_LAG_RATIO))
+        self.play(AnimationGroup(*animations, lag_ratio=self.GENE_COPY_LAG_RATIO))
