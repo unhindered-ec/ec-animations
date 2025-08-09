@@ -52,6 +52,8 @@ class NPointCrossoverScene(Scene):
             self.child_label,
         ) = self.build_genomes()
 
+        # There should be at least one crossover point
+        assert len(self.CROSSOVER_POINTS) > 0
         # The crossover points must be sorted and unique, and within the valid range of the genome.
         # Crossover points are located *before* the genes at the specified indices.
         assert len(self.CROSSOVER_POINTS) == len(set(self.CROSSOVER_POINTS)), "CROSSOVER_POINTS must contain unique values."
