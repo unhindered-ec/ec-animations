@@ -104,7 +104,6 @@ class NPointCrossoverScene(Scene):
         for index, crossover_point in enumerate(self.CROSSOVER_POINTS + [self.GENOME_LENGTH]):
             # Copy the genes for a given segment from the appropriate parent to the child.
             self.copy_genes(parents[index % 2], self.child_genes, range(previous_crossover, crossover_point))
-            self.wait(0.5)
             previous_crossover = crossover_point
 
         # Final wait
