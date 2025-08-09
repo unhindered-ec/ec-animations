@@ -23,7 +23,7 @@ class NPointCrossoverScene(Scene):
     LABEL_FONT_SIZE: int = 36
 
     # Crossover settings
-    CROSSOVER_POINTS: list[int] = [2, 6, 7]
+    CROSSOVER_POINTS: list[int] = [2, 5, 6, 8]
     CROSSOVER_LINE_COLOR: ManimColor = YELLOW
     CROSSOVER_LINE_DASH_LENGTH: float = 0.15
     CROSSOVER_LINE_DASH_RATIO: float = 0.70
@@ -33,7 +33,8 @@ class NPointCrossoverScene(Scene):
     CROSSOVER_RAY_COLOR: ManimColor = YELLOW
 
     # Animation settings
-    CROSSOVER_POINT_LAG_RATIO = 0.5
+    CROSSOVER_POINT_LAG_RATIO = 0
+    CROSSOVER_POINT_RAY_LAG_RATIO = 0.9
     GENE_COPY_LAG_RATIO: float = 0.1
 
     def setup(self):
@@ -87,7 +88,7 @@ class NPointCrossoverScene(Scene):
                         AnimationGroup(
                             ShowPassingFlash(ray, run_time=1, time_width=0.5),
                             Create(line),
-                            lag_ratio=0
+                            lag_ratio=self.CROSSOVER_POINT_RAY_LAG_RATIO
                         )
                         for (line, ray) in zip(crossover_lines, crossover_rays)
                     ],
