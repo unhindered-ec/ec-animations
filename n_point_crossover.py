@@ -86,7 +86,7 @@ class NPointCrossoverScene(Scene):
                         AnimationGroup(
                             ShowPassingFlash(ray, run_time=1, time_width=0.5),
                             Create(line),
-                            lag_ratio=1
+                            lag_ratio=0
                         )
                         for (line, ray) in zip(crossover_lines, crossover_rays)
                     ],
