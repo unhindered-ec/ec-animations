@@ -127,7 +127,7 @@ class NPointCrossoverScene(Scene):
         crossover_lines = VGroup()
         crossover_rays = VGroup()
 
-        for index, crossover_point in enumerate(self.CROSSOVER_POINTS):
+        for crossover_point in self.CROSSOVER_POINTS:
             dashed_line = self.visualize_crossover_point(crossover_point)
             crossover_lines.add(dashed_line)
 
@@ -186,7 +186,6 @@ class NPointCrossoverScene(Scene):
 
         Args:
             gap_index: The index of the first gene immediately after the crossover point.
-            label: The text to display for the crossover point label.
 
         Returns:
             The DashedLine Text mobject.
