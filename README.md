@@ -56,3 +56,9 @@ it's not too terrible.
 An animation illustrating two-point crossover. The animated AVIF was generated as described above.
 
 ![Animation illustrating two-point crossover](animations/TwoPointCrossover.avif)
+
+## N-point crossover
+
+An animation illustrating the more general N-point crossover (with $N=4$ in this example):
+
+![Animation illustrating N-point crossover](animations/NPointCrossover_15pfs.avif)
