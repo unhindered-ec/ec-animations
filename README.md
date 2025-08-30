@@ -62,3 +62,10 @@ An animation illustrating two-point crossover. The animated AVIF was generated a
 An animation illustrating the more general N-point crossover (with $N=4$ in this example):
 
 ![Animation illustrating N-point crossover](animations/NPointCrossover_15pfs.avif)
+
+## Uniform crossover
+
+An animation illustrating uniform crossover, where each gene is selected at random from
+one of the two parents.
+
+![Animation illustrating uniform crossover](animations/UniformCrossover_15pfs.avif)
