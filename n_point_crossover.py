@@ -33,8 +33,8 @@ class NPointCrossoverScene(Scene):
     CROSSOVER_RAY_COLOR: ManimColor = YELLOW
 
     # Animation settings
-    CROSSOVER_POINT_LAG_RATIO = 0
-    CROSSOVER_POINT_RAY_LAG_RATIO = 0.9
+    CROSSOVER_POINT_LAG_RATIO: float = 0.0
+    CROSSOVER_POINT_RAY_LAG_RATIO: float = 0.9
     GENE_COPY_LAG_RATIO: float = 0.1
 
     def setup(self):
