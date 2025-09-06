@@ -18,7 +18,7 @@ class NPointCrossoverScene(Scene):
     CHILD_INITIAL_STROKE_COLOR: ManimColor = BLACK
 
     # Layout settings
-    GENOMES_VERTICAL_BUFFER: float = 0.7
+    GENOMES_VERTICAL_BUFFER: float = 0.5
     LABEL_BUFFER: float = 0.3
     LABEL_FONT_SIZE: int = 36
 
@@ -27,7 +27,7 @@ class NPointCrossoverScene(Scene):
     CROSSOVER_LINE_COLOR: ManimColor = YELLOW
     CROSSOVER_LINE_DASH_LENGTH: float = 0.15
     CROSSOVER_LINE_DASH_RATIO: float = 0.70
-    CROSSOVER_LABEL_FONT_SIZE: int = 36
+    CROSSOVER_LABEL_FONT_SIZE: int = 30
     CROSSOVER_LINE_Y_PADDING: float = 0.1
     CROSSOVER_LABEL_Y_OFFSET: float = 0.3
     CROSSOVER_RAY_COLOR: ManimColor = YELLOW
@@ -36,6 +36,10 @@ class NPointCrossoverScene(Scene):
     CROSSOVER_POINT_LAG_RATIO: float = 0.0
     CROSSOVER_POINT_RAY_LAG_RATIO: float = 0.9
     GENE_COPY_LAG_RATIO: float = 0.1
+
+    # Titles and labels
+    TITLE: str = str(len(CROSSOVER_POINTS)) + "-point Crossover"
+    TITLE_FONT_SIZE: int = 48
 
     def setup(self):
         """
@@ -53,6 +57,8 @@ class NPointCrossoverScene(Scene):
             self.child_label,
         ) = self.build_genomes()
 
+        self.title_text = Text(self.TITLE, font_size=self.TITLE_FONT_SIZE)
+
         # There should be at least one crossover point
         assert len(self.CROSSOVER_POINTS) > 0
         # The crossover points must be sorted and unique, and within the valid range of the genome.
@@ -67,10 +73,13 @@ class NPointCrossoverScene(Scene):
     def construct(self):
         """Defines the animation sequence for N-point crossover."""
         # Group all genomes and labels, center them, and add them to the scene.
-        all_mobjects = VGroup(
+        individuals = VGroup(
             self.parent1_genes, self.parent2_genes, self.child_genes,
             self.p1_label, self.p2_label, self.child_label
-        ).center()
+        )
+
+        all_mobjects = VGroup(self.title_text.next_to(individuals, UP, buff=1.3), individuals).center()
+
         self.add(all_mobjects)
 
         crossover_lines, crossover_text, crossover_rays = self.build_crossover_visualization()
@@ -135,11 +144,12 @@ class NPointCrossoverScene(Scene):
         num_crossover_points = len(self.CROSSOVER_POINTS)
         if num_crossover_points == 1:
             label = "Crossover point"
-            text = Text(label, font_size=self.CROSSOVER_LABEL_FONT_SIZE).next_to(crossover_lines[0], UP)
+            text = Text(label, font_size=self.CROSSOVER_LABEL_FONT_SIZE, slant=ITALIC
+                        ).next_to(crossover_lines[0], UP, buff = 0.5)
             crossover_text = text
         else:
             label = "Crossover points"
-            text = Text(label, font_size=self.CROSSOVER_LABEL_FONT_SIZE).next_to(self.parent1_genes, UP, buff=1)
+            text = Text(label, font_size=self.CROSSOVER_LABEL_FONT_SIZE, slant=ITALIC).next_to(self.parent1_genes, UP, buff=0.5)
             crossover_text = text
             for line in crossover_lines:
                 start = text.get_bottom()

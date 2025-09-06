@@ -18,7 +18,7 @@ class UniformCrossoverScene(Scene):
     CHILD_INITIAL_STROKE_COLOR: ManimColor = BLACK
 
     # Layout settings
-    GENOMES_VERTICAL_BUFFER: float = 0.7
+    GENOMES_VERTICAL_BUFFER: float = 0.5
     LABEL_BUFFER: float = 0.3
     LABEL_FONT_SIZE: int = 36
 
@@ -50,6 +50,8 @@ class UniformCrossoverScene(Scene):
             self.child_label,
         ) = self.build_genomes()
 
+        self.title_text = Text(self.TITLE, font_size=self.TITLE_FONT_SIZE)
+
         # This seed gave us a nice distribution, at least when we ran it on 30 Aug 2025
         # 1001110110
         random.seed(5)
@@ -59,18 +61,18 @@ class UniformCrossoverScene(Scene):
     def construct(self):
         """Defines the animation sequence for uniform crossover."""
         # Group all genomes and labels, center them, and add them to the scene.
-        all_mobjects = VGroup(
+        individuals = VGroup(
             self.parent1_genes, self.parent2_genes, self.child_genes,
             self.p1_label, self.p2_label, self.child_label
-        ).center()
-        title_text = Text(self.TITLE, font_size=self.TITLE_FONT_SIZE).next_to(all_mobjects, UP, buff=1)
+        )
+
+        all_mobjects = VGroup(self.title_text.next_to(individuals, UP, buff=1.3), individuals).center()
 
         self.arrow = Arrow(start=0.5*UP, end=0.5*DOWN, color=self.CROSSOVER_LINE_COLOR,
                            max_tip_length_to_length_ratio=0.5,
                            max_stroke_width_to_length_ratio=10)
         self.arrow.next_to(self.parent1_genes[0], UP)
 
-        self.add(title_text)
         self.add(all_mobjects)
 
         self.wait(0.5)
