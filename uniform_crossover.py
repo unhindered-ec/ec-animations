@@ -33,8 +33,6 @@ class UniformCrossoverScene(Scene):
     # Titles and labels
     TITLE: str = "Uniform Crossover"
     TITLE_FONT_SIZE: int = 48
-    # Arrow indicating crossover point
-    ARROW = Arrow(start=0.5*UP, end=0.5*DOWN, color=CROSSOVER_LINE_COLOR, max_tip_length_to_length_ratio=0.5, max_stroke_width_to_length_ratio=10)
 
     def setup(self):
         """
@@ -66,7 +64,11 @@ class UniformCrossoverScene(Scene):
             self.p1_label, self.p2_label, self.child_label
         ).center()
         title_text = Text(self.TITLE, font_size=self.TITLE_FONT_SIZE).next_to(all_mobjects, UP, buff=1)
-        self.ARROW.next_to(self.parent1_genes[0], UP)
+
+        self.arrow = Arrow(start=0.5*UP, end=0.5*DOWN, color=self.CROSSOVER_LINE_COLOR,
+                           max_tip_length_to_length_ratio=0.5,
+                           max_stroke_width_to_length_ratio=10)
+        self.arrow.next_to(self.parent1_genes[0], UP)
 
         self.add(title_text)
         self.add(all_mobjects)
@@ -123,9 +125,7 @@ class UniformCrossoverScene(Scene):
 
 
     def point_to_gene(self, gene: Mobject):
-        arrow = Arrow(start=0.5*UP, end=0.5*DOWN, color=self.CROSSOVER_LINE_COLOR, max_tip_length_to_length_ratio=0.5, max_stroke_width_to_length_ratio=10).next_to(gene, UP)
-        self.play(ReplacementTransform(self.ARROW, arrow, run_time=0.25))
-        self.ARROW = arrow
+        self.play(self.arrow.animate.next_to(gene, UP), run_time=self.ARROW_RUN_TIME)
 
     def copy_gene(self, index: int, from_genes: VGroup, to_genes: VGroup):
         """
