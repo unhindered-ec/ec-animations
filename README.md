@@ -51,17 +51,27 @@ a quite nice output that is still highly scalable but with a file size that is n
 Generating AVIF files is much slower than generating animated GIFs, but if you keep the framerate down (like 15 FPS)
 it's not too terrible.
 
-## Two-point crossover
-
-An animation illustrating two-point crossover. The animated AVIF was generated as described above.
-
-![Animation illustrating two-point crossover](animations/TwoPointCrossover.avif)
+---
 
 ## N-point crossover
 
-An animation illustrating the more general N-point crossover (with $N=4$ in this example):
+The `NPointCrossover` scene in `n_point_crossover.py` can animate arbitrary numbers of crossover
+points from 1 up to $N-1$, where $N$ is the number of genes. We illustrate this below with animations
+for 1, 2, and 4-point crossovers. In each case the animated AVIF was generated as described above.
 
-![Animation illustrating N-point crossover](animations/NPointCrossover_15pfs.avif)
+### 1-point crossover
+
+![Animation illustrating 1-point crossover](animations/1PointCrossover_15fps.avif)
+
+### 2-point crossover
+
+![Animation illustrating 2-point crossover](animations/2PointCrossover_15fps.avif)
+
+### 4-point crossover
+
+![Animation illustrating 4-point crossover](animations/4PointCrossover_15fps.avif)
+
+---
 
 ## Uniform crossover
 
