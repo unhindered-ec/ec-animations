@@ -26,9 +26,9 @@ class UniformCrossoverScene(Scene):
     CROSSOVER_LINE_COLOR: ManimColor = YELLOW
 
     # Animation settings
-    ARROW_RUN_TIME = 0.25
-    PARENT_GENE_HIGHLIGHT_RUN_TIME = 0.75
-    GENE_COPY_RUN_TIME = 0.5
+    ARROW_RUN_TIME: float = 0.25
+    PARENT_GENE_HIGHLIGHT_RUN_TIME: float = 0.75
+    GENE_COPY_RUN_TIME: float = 0.5
 
     # Titles and labels
     TITLE: str = "Uniform Crossover"
