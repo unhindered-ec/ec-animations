@@ -1,5 +1,4 @@
 import random
-from typing import cast
 from manim import * # type: ignore
 
 class UniformCrossoverScene(Scene):
@@ -25,22 +24,15 @@ class UniformCrossoverScene(Scene):
 
     # Crossover settings
     CROSSOVER_LINE_COLOR: ManimColor = YELLOW
-    CROSSOVER_LINE_DASH_LENGTH: float = 0.15
-    CROSSOVER_LINE_DASH_RATIO: float = 0.70
-    CROSSOVER_LABEL_FONT_SIZE: int = 36
-    CROSSOVER_LINE_Y_PADDING: float = 0.1
-    CROSSOVER_LABEL_Y_OFFSET: float = 0.3
-    CROSSOVER_RAY_COLOR: ManimColor = YELLOW
 
     # Animation settings
-    CROSSOVER_POINT_LAG_RATIO: float = 0.0
-    CROSSOVER_POINT_RAY_LAG_RATIO: float = 0.9
-    GENE_COPY_LAG_RATIO: float = 0.1
+    ARROW_RUN_TIME = 0.25
+    PARENT_GENE_HIGHLIGHT_RUN_TIME = 0.75
+    GENE_COPY_RUN_TIME = 0.5
 
     # Titles and labels
     TITLE: str = "Uniform Crossover"
     TITLE_FONT_SIZE: int = 48
-
     # Arrow indicating crossover point
     ARROW = Arrow(start=0.5*UP, end=0.5*DOWN, color=CROSSOVER_LINE_COLOR, max_tip_length_to_length_ratio=0.5, max_stroke_width_to_length_ratio=10)
 
@@ -88,11 +80,11 @@ class UniformCrossoverScene(Scene):
             self.point_to_gene(self.parent1_genes[index])
             which_parent = random.choice(parents)
             # Highlight the parent gene chosen for copying
-            self.play(Circumscribe(which_parent[index]), run_time=0.75)
+            self.play(Circumscribe(which_parent[index]), run_time=self.PARENT_GENE_HIGHLIGHT_RUN_TIME)
             # Copy the genes for a given gene from the appropriate parent to the child.
             self.copy_gene(index, which_parent, self.child_genes)
 
-        self.remove(self.ARROW)
+        self.remove(self.arrow)
 
         # Final wait
         self.wait(1)
@@ -129,35 +121,6 @@ class UniformCrossoverScene(Scene):
             for _ in range(self.GENOME_LENGTH)
         ]).arrange(RIGHT, buff=self.GENOME_BUFFER)
 
-    def visualize_crossover_point(self, gap_index: int) -> DashedLine:
-        """
-        Creates the dashed line for a crossover point.
-
-        Args:
-            gap_index: The index of the first gene immediately after the crossover point.
-
-        Returns:
-            The DashedLine Text mobject.
-        """
-        # Specify the y-coordinates for the top and bottom of the crossover line
-        cp_line_y_start = self.parent1_genes.get_top()[1] + self.CROSSOVER_LINE_Y_PADDING
-        cp_line_y_end = self.child_genes.get_bottom()[1] - self.CROSSOVER_LINE_Y_PADDING
-
-        if gap_index < self.GENOME_LENGTH:
-            # Set the x-coordinate of the crossover line to be a little to the left of the gene at `gap_index`.
-            x_coordinate = self.parent1_genes[gap_index].get_left()[0] - (self.GENOME_BUFFER / 2)
-        else:
-            # Here the crossover line is to the right of all the genes, so we set its x-coordinate to be a little
-            # to the right of the last gene.
-            x_coordinate = self.parent1_genes[-1].get_right()[0] + (self.GENOME_BUFFER / 2)
-        line = DashedLine(
-            Point(np.array([x_coordinate, cp_line_y_start, 0])),
-            Point(np.array([x_coordinate, cp_line_y_end, 0])),
-            color=self.CROSSOVER_LINE_COLOR,
-            dash_length=self.CROSSOVER_LINE_DASH_LENGTH,
-            dashed_ratio=self.CROSSOVER_LINE_DASH_RATIO
-        )
-        return line
 
     def point_to_gene(self, gene: Mobject):
         arrow = Arrow(start=0.5*UP, end=0.5*DOWN, color=self.CROSSOVER_LINE_COLOR, max_tip_length_to_length_ratio=0.5, max_stroke_width_to_length_ratio=10).next_to(gene, UP)
@@ -177,6 +140,4 @@ class UniformCrossoverScene(Scene):
         # We must set `match_center` to `True`, otherwise the child's position will also
         # be set to match the parent's, and the gene will not appear to move.
         to_genes[index].become(from_genes[index], match_center=True)
-        # animations.append(TransformFromCopy(from_genes[i], to_genes[i]))
-        # self.play(AnimationGroup(*animations, lag_ratio=self.GENE_COPY_LAG_RATIO))
-        self.play(TransformFromCopy(from_genes[index], to_genes[index]), run_time=0.5)
+        self.play(TransformFromCopy(from_genes[index], to_genes[index]), run_time=self.GENE_COPY_RUN_TIME)
