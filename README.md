@@ -78,4 +78,4 @@ for 1, 2, and 4-point crossovers. In each case the animated AVIF was generated a
 An animation illustrating uniform crossover, where each gene is selected at random from
 one of the two parents.
 
-![Animation illustrating uniform crossover](animations/UniformCrossover_15pfs.avif)
+![Animation illustrating uniform crossover](animations/UniformCrossover_15fps.avif)
