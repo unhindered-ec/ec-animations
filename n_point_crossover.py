@@ -38,7 +38,7 @@ class NPointCrossoverScene(Scene):
     GENE_COPY_LAG_RATIO: float = 0.1
 
     # Titles and labels
-    TITLE: str = str(len(CROSSOVER_POINTS)) + "-point Crossover"
+    # TITLE: str = str(len(CROSSOVER_POINTS)) + "-point Crossover"
     TITLE_FONT_SIZE: int = 48
 
     def setup(self):
@@ -57,7 +57,9 @@ class NPointCrossoverScene(Scene):
             self.child_label,
         ) = self.build_genomes()
 
-        self.title_text = Text(self.TITLE, font_size=self.TITLE_FONT_SIZE)
+        # self.title_text = Text(self.TITLE, font_size=self.TITLE_FONT_SIZE)
+        title_str = f"{len(self.CROSSOVER_POINTS)}-point Crossover"
+        self.title_text = Text(title_str, font_size=self.TITLE_FONT_SIZE)
 
         # There should be at least one crossover point
         assert len(self.CROSSOVER_POINTS) > 0
