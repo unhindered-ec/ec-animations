@@ -1,6 +1,7 @@
 import random
 from manim import * # type: ignore
 from enum import Enum, auto
+from typing import Optional
 
 # Indicates, during the addition phase, at which side of a gene (left or right)
 # we're inserting a new gene.
@@ -15,11 +16,12 @@ class Umad(Scene):
     DELETION_RATE: float = 0.3
 
     # Genome settings
-    GENOME_LENGTH: int = 10
-    GENE_SIDE_LENGTH: float = 0.7
+    GENOME_LENGTH: int = 5
+    GENE_SIDE_LENGTH: float = 0.8
     GENE_STROKE_WIDTH: float = 2
     GENE_FILL_OPACITY: float = 0.8
     GENOME_BUFFER: float = 0.15
+    GENE_FONT_SIZE: int = 30
 
     # Parent/Child colors
     PARENT_GENE_COLOR: ManimColor = BLUE_E
@@ -122,6 +124,7 @@ class Umad(Scene):
         for index in range(len(self.addition_phase_genes)):
             self.point_to_gene(self.addition_phase_genes[index])
             insert_here = random.random() < self.ADDITION_RATE
+            ### PICK UP HERE!
             if insert_here:
                 which_side = random.choice(list(Side))
 
@@ -178,11 +181,19 @@ class Umad(Scene):
     def build_genome(self, fill_color: ManimColor, stroke_color: ManimColor) -> VGroup:
         """Builds a single genome as a VGroup of squares."""
         return VGroup(*[
-            Square(side_length=self.GENE_SIDE_LENGTH, fill_color=fill_color, fill_opacity=self.GENE_FILL_OPACITY,
-                   stroke_color=stroke_color, stroke_width=self.GENE_STROKE_WIDTH)
-            for _ in range(self.GENOME_LENGTH)
+            self.build_gene(fill_color, stroke_color, i)
+            for i in range(self.GENOME_LENGTH)
         ]).arrange(RIGHT, buff=self.GENOME_BUFFER)
 
+    def build_gene(self, fill_color: ManimColor, stroke_color: ManimColor, index: int, parent_direction: Optional[Side] = None):
+        result = VGroup() # create a VGroup
+        box = Square(
+            side_length=self.GENE_SIDE_LENGTH, fill_color=fill_color, fill_opacity=self.GENE_FILL_OPACITY,
+            stroke_color=stroke_color, stroke_width=self.GENE_STROKE_WIDTH
+        )
+        text = Text(chr(index + ord('a')), font_size=self.GENE_FONT_SIZE).move_to(box.get_center()) # create text
+        result.add(box, text) # add both objects to the VGroup
+        return result
 
     def point_to_gene(self, gene: Mobject):
         self.play(self.arrow.animate.next_to(gene, UP), run_time=self.ARROW_RUN_TIME)
