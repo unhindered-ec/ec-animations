@@ -33,7 +33,7 @@ class Umad(Scene):
     CHILD_INITIAL_STROKE_COLOR: ManimColor = BLACK
 
     # Layout settings
-    GENOMES_VERTICAL_BUFFER: float = 0.5
+    GENOMES_VERTICAL_BUFFER: float = 1
     LABEL_BUFFER: float = 0.3
     LABEL_FONT_SIZE: int = 36
 
@@ -80,9 +80,17 @@ class Umad(Scene):
         individuals = VGroup(
             self.parent_genes, self.addition_phase_genes, self.deletion_phase_genes,
             self.parent_label, self.addition_label, self.deletion_label
-        )
+        ).to_edge(LEFT)
 
-        all_mobjects = VGroup(self.title_text.next_to(individuals, UP, buff=1.3), individuals).center()
+        title = self.title_text.next_to(individuals, UP, buff=1.3)
+        center = title.get_center()
+        center[1] = 0
+        title = title.shift(-center)
+
+        all_mobjects = VGroup(title, individuals)
+        center = all_mobjects.get_center()
+        center[0] = 0
+        all_mobjects = all_mobjects.shift(-center)
 
         self.arrow = Arrow(start=0.5*UP, end=0.5*DOWN, color=self.CROSSOVER_LINE_COLOR,
                            max_tip_length_to_length_ratio=0.5,
