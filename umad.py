@@ -1,7 +1,7 @@
 import random
-from manim import * # type: ignore
+from manim import *
 from enum import Enum, auto
-from typing import Optional
+from typing import Optional, cast
 
 # Indicates, during the addition phase, at which side of a gene (left or right)
 # we're inserting a new gene.
@@ -68,8 +68,6 @@ class Umad(Scene):
 
         self.title_text = Text(self.TITLE, font_size=self.TITLE_FONT_SIZE)
 
-        # This seed gave us a nice distribution, at least when we ran it on 30 Aug 2025
-        # 1001110110
         random.seed(5)
 
         super().setup()
