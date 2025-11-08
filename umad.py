@@ -127,28 +127,44 @@ class Umad(Scene):
         self.addition_phase_genes.become(self.parent_genes, match_center=True)
         self.play(TransformFromCopy(self.parent_genes, self.addition_phase_genes), run_time=self.GENE_COPY_RUN_TIME)
 
+        shift_distance = self.addition_phase_genes[1].get_center() - self.addition_phase_genes[0].get_center()
+
+        current_parent_gene_position = 0
         for index in range(len(self.addition_phase_genes)):
-            gene = self.addition_phase_genes[index]
+            gene = self.addition_phase_genes[current_parent_gene_position]
             self.point_to_gene(gene)
+            self.play(Circumscribe(gene), run_time=self.PARENT_GENE_HIGHLIGHT_RUN_TIME)
             insert_here = random.random() < self.ADDITION_RATE
             # We have to call `set_color` on `gene[0]` to make sure
             # we're only changing the color of the square and not affecting
             # the color of the text.
             if insert_here:
+                # cast(VMobject, gene[0]).set_fill(self.ADDED_GENE_COLOR)
                 # which_side = random.choice(list(Side))
-                gene[0].set_color(self.ADDED_GENE_COLOR)
-            else:
-                gene[0].set_color(self.DELETED_GENE_COLOR)
+                which_side = Side.LEFT
+                shift_start = current_parent_gene_position
+                if which_side == Side.RIGHT:
+                    shift_start += 1
+                shifts = [MoveAlongPath(gene, Line(gene.get_center(), gene.get_center() + shift_distance))
+                          for gene in self.addition_phase_genes[shift_start:]]
+                # If the inserted gene is on the left, then we also need to shift the
+                # arrow the width of one gene to the right.
+                if which_side == Side.LEFT:
+                    shifts.append(MoveAlongPath(self.arrow, Line(self.arrow.get_center(), self.arrow.get_center() + shift_distance)))
+                self.play(
+                    AnimationGroup(shifts),
+                    rate_func=rate_functions.ease_in_out_sine)
 
-            # # Highlight the parent gene chosen for copying
-            # self.play(Circumscribe(which_parent[index]), run_time=self.PARENT_GENE_HIGHLIGHT_RUN_TIME)
-            # # Copy the genes for a given gene from the appropriate parent to the child.
-            # self.copy_gene(index, which_parent, self.deletion_phase_genes)
+                ## START HERE
+
+                # Insert the new gene and the arrow
+                # current_parent_gene_position += 1
+
+            current_parent_gene_position += 1
 
             self.wait(0.1)
 
         self.remove(self.arrow)
-
 
         self.wait(0.25)
 
@@ -156,6 +172,7 @@ class Umad(Scene):
         pass
 
     def animate_deletions(self):
+        # TODO: Move the copying of the result of addition here.
         subtitle = "Deletion phase"
         subtitle_text = Text(subtitle, font_size=self.SUBTITLE_FONT_SIZE, slant=ITALIC).next_to(self.title_text, DOWN, buff=0.5)
         self.add(subtitle_text)
