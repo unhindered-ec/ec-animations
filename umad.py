@@ -25,7 +25,7 @@ class Umad(Scene):
 
     # Parent/Child colors
     PARENT_GENE_COLOR: ManimColor = BLUE_E
-    ADDED_GENE_COLOR: ManimColor = ORANGE
+    ADDED_GENE_COLOR: ManimColor = GREEN
     DELETED_GENE_COLOR: ManimColor = RED
 
     PARENT_STROKE_COLOR: ManimColor = BLACK
@@ -130,12 +130,17 @@ class Umad(Scene):
         self.play(TransformFromCopy(self.parent_genes, self.addition_phase_genes), run_time=self.GENE_COPY_RUN_TIME)
 
         for index in range(len(self.addition_phase_genes)):
-            self.point_to_gene(self.addition_phase_genes[index])
+            gene = self.addition_phase_genes[index]
+            self.point_to_gene(gene)
             insert_here = random.random() < self.ADDITION_RATE
-            ### PICK UP HERE!
+            # We have to call `set_color` on `gene[0]` to make sure
+            # we're only changing the color of the square and not affecting
+            # the color of the text.
             if insert_here:
-                which_side = random.choice(list(Side))
-
+                # which_side = random.choice(list(Side))
+                gene[0].set_color(self.ADDED_GENE_COLOR)
+            else:
+                gene[0].set_color(self.DELETED_GENE_COLOR)
 
             # # Highlight the parent gene chosen for copying
             # self.play(Circumscribe(which_parent[index]), run_time=self.PARENT_GENE_HIGHLIGHT_RUN_TIME)
