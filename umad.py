@@ -120,6 +120,7 @@ class Umad(Scene):
         self.wait(1)
 
     def animate_additions(self):
+        # TODO: Move the copying of the initial genome here
         subtitle = "Addition phase"
         subtitle_text = Text(subtitle, font_size=self.SUBTITLE_FONT_SIZE, slant=ITALIC).next_to(self.title_text, DOWN, buff=0.25)
         self.add(subtitle_text)
@@ -220,6 +221,7 @@ class Umad(Scene):
             stroke_color=stroke_color, stroke_width=self.GENE_STROKE_WIDTH
         )
         text = Text(chr(index + ord('a')), font_size=self.GENE_FONT_SIZE).move_to(box.get_center()) # create text
+        # TODO: Add the arrow if it's present
         result.add(box, text) # add both objects to the VGroup
         return result
 
