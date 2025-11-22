@@ -59,12 +59,10 @@ class Umad(Scene):
         """
         (
             self.parent_genes,
-            self.addition_phase_genes,
-            self.deletion_phase_genes,
             self.parent_label,
             self.addition_label,
             self.deletion_label,
-        ) = self.build_genomes()
+        ) = self.build_labels_and_initial_genome()
 
         self.title_text = Text(self.TITLE, font_size=self.TITLE_FONT_SIZE)
 
@@ -74,18 +72,18 @@ class Umad(Scene):
 
     def construct(self):
         """Defines the animation sequence for uniform crossover."""
-        # Group all genomes and labels, center them, and add them to the scene.
-        individuals = VGroup(
-            self.parent_genes, self.addition_phase_genes, self.deletion_phase_genes,
+        # Group all the labels and the initial genome, and add them to the scene, aligned to the left.
+        labels_and_genes = VGroup(
+            self.parent_genes,
             self.parent_label, self.addition_label, self.deletion_label
         ).to_edge(LEFT)
 
-        title = self.title_text.next_to(individuals, UP, buff=1.3)
+        title = self.title_text.next_to(labels_and_genes, UP, buff=1.3)
         center = title.get_center()
         center[1] = 0
         title = title.shift(-center)
 
-        all_mobjects = VGroup(title, individuals)
+        all_mobjects = VGroup(title, labels_and_genes)
         center = all_mobjects.get_center()
         center[0] = 0
         all_mobjects = all_mobjects.shift(-center)
@@ -183,29 +181,27 @@ class Umad(Scene):
         self.remove(subtitle_text)
         pass
 
-    def build_genomes(self) -> tuple[VGroup, VGroup, VGroup, Text, Text, Text]:
+    def build_labels_and_initial_genome(self) -> tuple[VGroup, Text, Text, Text]:
         """
-        Builds the parent and child genome mobjects and their labels.
+        Builds the parent, addition, and deletion labels, and the parent child genome mobject.
 
-        This method creates the visual representations of the genomes and labels,
+        This method creates the visual representations of the initial genome and all three labels,
         arranges them, but does not add them to the scene.
 
         Returns:
-            A tuple containing the mobjects for parent 1 genes, parent 2 genes,
-            child genes, parent 1 label, parent 2 label, and child label.
+            A tuple containing the mobjects for parent genes and the three labels.
         """
-        parent_genes: VGroup = self.build_genome(self.PARENT_GENE_COLOR, self.PARENT_STROKE_COLOR)
-        addition_phase_genes: VGroup = self.build_genome(self.CHILD_INITIAL_FILL_COLOR, self.CHILD_INITIAL_STROKE_COLOR)
-        deletion_phase_genes: VGroup = self.build_genome(self.CHILD_INITIAL_FILL_COLOR, self.CHILD_INITIAL_STROKE_COLOR)
+        parent_label: Text = Text("Parent genes", font_size=self.LABEL_FONT_SIZE)
+        addition_label: Text = Text("Addition", font_size=self.LABEL_FONT_SIZE)
+        deletion_label: Text = Text("Deletion", font_size=self.LABEL_FONT_SIZE)
+        VGroup(parent_label, addition_label, deletion_label).arrange(DOWN, buff=self.GENOMES_VERTICAL_BUFFER)
+        # Right aligns all the labels
+        addition_label.align_to(parent_label, RIGHT)
+        deletion_label.align_to(parent_label, RIGHT)
 
-        # Arrange genomes vertically. This modifies the mobjects in place.
-        VGroup(parent_genes, addition_phase_genes, deletion_phase_genes).arrange(DOWN, buff=self.GENOMES_VERTICAL_BUFFER)
+        parent_genes: VGroup = self.build_genome(self.PARENT_GENE_COLOR, self.PARENT_STROKE_COLOR).next_to(parent_label, RIGHT, buff=self.LABEL_BUFFER)
 
-        parent_label: Text = Text("Parent genes", font_size=self.LABEL_FONT_SIZE).next_to(parent_genes, LEFT, buff=self.LABEL_BUFFER)
-        addition_label: Text = Text("Addition", font_size=self.LABEL_FONT_SIZE).next_to(addition_phase_genes, LEFT, buff=self.LABEL_BUFFER)
-        deletion_label: Text = Text("Deletion", font_size=self.LABEL_FONT_SIZE).next_to(deletion_phase_genes, LEFT, buff=self.LABEL_BUFFER)
-
-        return parent_genes, addition_phase_genes, deletion_phase_genes, parent_label, addition_label, deletion_label
+        return parent_genes, parent_label, addition_label, deletion_label
 
     def build_genome(self, fill_color: ManimColor, stroke_color: ManimColor) -> VGroup:
         """Builds a single genome as a VGroup of squares."""
