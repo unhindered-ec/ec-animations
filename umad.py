@@ -190,10 +190,13 @@ class Umad(Scene):
         self.remove(subtitle_text)
 
     def animate_deletions(self):
-        # TODO: Move the copying of the result of addition here.
         subtitle = "Deletion phase"
         subtitle_text = Text(subtitle, font_size=self.SUBTITLE_FONT_SIZE, slant=ITALIC).next_to(self.title_text, DOWN, buff=0.5)
         self.add(subtitle_text)
+
+        # Make a copy of the addition phase genes for the deletion phase
+        self.deletion_phase_genes = self.addition_phase_genes.copy().next_to(self.deletion_label, RIGHT)
+        self.play(TransformFromCopy(self.addition_phase_genes, self.deletion_phase_genes), run_time=self.GENE_COPY_RUN_TIME)
 
         self.wait(0.25)
 
