@@ -130,6 +130,9 @@ class Umad(Scene):
         # The distance between two adjacent genes
         shift_distance = self.addition_phase_genes[1].get_center() - self.addition_phase_genes[0].get_center()
 
+        # A VGroup that will contain all the parent genes and all the newly inserted child genes.
+        final_addition_phase_genes: VGroup = VGroup()
+
         current_parent_gene_position = 0
         for index in range(len(self.addition_phase_genes)):
             gene = self.addition_phase_genes[current_parent_gene_position]
@@ -160,21 +163,26 @@ class Umad(Scene):
                 # box), so we shift by the difference between those two centers.
                 if which_side == Side.LEFT:
                     child_gene.move_to(gene.get_center())
+                    final_addition_phase_genes.add(*[child_gene, gene])
                 else:
                     child_gene.move_to(
                         gene.get_center() + RIGHT * (self.GENE_SIDE_LENGTH + self.GENOME_BUFFER)
                     )
+                    final_addition_phase_genes.add(*[gene, child_gene])
                 child_gene.shift(child_gene.get_center() - child_gene[0].get_center())
 
                 self.add(child_gene)
                 self.play(
                     AnimationGroup(changes),
                     rate_func=rate_functions.ease_in_out_sine)
+            else:
+                final_addition_phase_genes.add(cast(VMobject, gene))
 
             current_parent_gene_position += 1
 
             self.wait(0.1)
 
+        self.addition_phase_genes = final_addition_phase_genes
         self.remove(self.arrow)
 
         self.wait(0.25)
