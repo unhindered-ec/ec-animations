@@ -216,25 +216,21 @@ class Umad(Scene):
             side_length=self.GENE_SIDE_LENGTH, fill_color=fill_color, fill_opacity=self.GENE_FILL_OPACITY,
             stroke_color=stroke_color, stroke_width=self.GENE_STROKE_WIDTH
         )
-        text = Text(chr(index + ord('a')), font_size=self.GENE_FONT_SIZE).move_to(box.get_center()) # create text
-        # TODO: Add the arrow if it's present
+        char_text = chr(index + ord('a'))
+        suffix = "" if parent_direction is None else "_c"
+        text = MathTex(f"{char_text}{suffix}", font_size=self.GENE_FONT_SIZE).move_to(box.get_center()) # create text
         result.add(box, text) # add both objects to the VGroup
+        if parent_direction != None:
+            direction = 1 if parent_direction == Side.LEFT else -1
+            arrow = Arrow(
+                start=direction * 0.5 * self.CHILD_ARROW_LENGTH * LEFT,
+                  end=direction * 0.5 * self.CHILD_ARROW_LENGTH * RIGHT,
+                  color=self.CROSSOVER_LINE_COLOR,
+                  max_tip_length_to_length_ratio=0.5,
+                  max_stroke_width_to_length_ratio=10
+                ).align_to(box, UP).shift(DOWN * 0.05).align_to(box, RIGHT * direction).shift(RIGHT * 0.1 * direction)
+            result.add(arrow)
         return result
 
     def point_to_gene(self, gene: Mobject):
         self.play(self.arrow.animate.next_to(gene, UP), run_time=self.ARROW_RUN_TIME)
-
-    def copy_gene(self, index: int, from_genes: VGroup, to_genes: VGroup):
-        """
-        Animates the copying of a single gene from a parent to the child.
-
-        Args:
-            index: The position of the gene being copied.
-            from_genes: The parent genome mobject to copy from.
-            to_genes: The child genome mobject to copy to.
-        """
-        # Set the target genome square to have the same color, etc., as the parent genome.
-        # We must set `match_center` to `True`, otherwise the child's position will also
-        # be set to match the parent's, and the gene will not appear to move.
-        to_genes[index].become(from_genes[index], match_center=True)
-        self.play(TransformFromCopy(from_genes[index], to_genes[index]), run_time=self.GENE_COPY_RUN_TIME)
