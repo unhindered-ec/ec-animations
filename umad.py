@@ -180,7 +180,6 @@ class Umad(Scene):
         self.wait(0.25)
 
         self.remove(subtitle_text)
-        pass
 
     def animate_deletions(self):
         # TODO: Move the copying of the result of addition here.
