@@ -118,14 +118,15 @@ class Umad(Scene):
         self.wait(1)
 
     def animate_additions(self):
-        # TODO: Move the copying of the initial genome here
         subtitle = "Addition phase"
         subtitle_text = Text(subtitle, font_size=self.SUBTITLE_FONT_SIZE, slant=ITALIC).next_to(self.title_text, DOWN, buff=0.25)
         self.add(subtitle_text)
 
-        self.addition_phase_genes.become(self.parent_genes, match_center=True)
+        # Make a copy of the parent genes for the addition phase
+        self.addition_phase_genes = self.parent_genes.copy().next_to(self.addition_label, RIGHT)
         self.play(TransformFromCopy(self.parent_genes, self.addition_phase_genes), run_time=self.GENE_COPY_RUN_TIME)
 
+        # The distance between two adjacent genes
         shift_distance = self.addition_phase_genes[1].get_center() - self.addition_phase_genes[0].get_center()
 
         current_parent_gene_position = 0
