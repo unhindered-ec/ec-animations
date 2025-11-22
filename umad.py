@@ -31,6 +31,7 @@ class Umad(Scene):
     PARENT_STROKE_COLOR: ManimColor = BLACK
     CHILD_INITIAL_FILL_COLOR: ManimColor = BLACK
     CHILD_INITIAL_STROKE_COLOR: ManimColor = BLACK
+    CHILD_ARROW_LENGTH: float = GENE_SIDE_LENGTH / 2
 
     # Layout settings
     GENOMES_VERTICAL_BUFFER: float = 1
