@@ -136,30 +136,40 @@ class Umad(Scene):
             self.point_to_gene(gene)
             self.play(Circumscribe(gene), run_time=self.PARENT_GENE_HIGHLIGHT_RUN_TIME)
             insert_here = random.random() < self.ADDITION_RATE
-            # We have to call `set_color` on `gene[0]` to make sure
-            # we're only changing the color of the square and not affecting
-            # the color of the text.
             if insert_here:
-                # cast(VMobject, gene[0]).set_fill(self.ADDED_GENE_COLOR)
-                # which_side = random.choice(list(Side))
-                which_side = Side.LEFT
+                which_side = random.choice(list(Side))
+                # `shift_start` is the index of the first gene that will need to be shifted to
+                # the right to make room for the new gene.
                 shift_start = current_parent_gene_position
                 if which_side == Side.RIGHT:
                     shift_start += 1
-                shifts = [MoveAlongPath(gene, Line(gene.get_center(), gene.get_center() + shift_distance))
-                          for gene in self.addition_phase_genes[shift_start:]]
+                changes = [MoveAlongPath(gene, Line(gene.get_center(), gene.get_center() + shift_distance))
+                           for gene in self.addition_phase_genes[shift_start:]]
                 # If the inserted gene is on the left, then we also need to shift the
                 # arrow the width of one gene to the right.
                 if which_side == Side.LEFT:
-                    shifts.append(MoveAlongPath(self.arrow, Line(self.arrow.get_center(), self.arrow.get_center() + shift_distance)))
+                    changes.append(
+                        MoveAlongPath(self.arrow, Line(self.arrow.get_center(), self.arrow.get_center() + shift_distance))
+                    )
+                child_gene = self.build_gene(self.ADDED_GENE_COLOR, self.PARENT_STROKE_COLOR, current_parent_gene_position, which_side)
+                # Placing the gene is awkward because of the arrow, which changes the width of the
+                # gene's VGroup.
+                #
+                # The `move_to` calls position according to `child_gene.get_center()`, but we want
+                # to position according to `child_gene[0].get_center()` (the center of the child gene's
+                # box), so we shift by the difference between those two centers.
+                if which_side == Side.LEFT:
+                    child_gene.move_to(gene.get_center())
+                else:
+                    child_gene.move_to(
+                        gene.get_center() + RIGHT * (self.GENE_SIDE_LENGTH + self.GENOME_BUFFER)
+                    )
+                child_gene.shift(child_gene.get_center() - child_gene[0].get_center())
+
+                self.add(child_gene)
                 self.play(
-                    AnimationGroup(shifts),
+                    AnimationGroup(changes),
                     rate_func=rate_functions.ease_in_out_sine)
-
-                ## START HERE
-
-                # Insert the new gene and the arrow
-                # current_parent_gene_position += 1
 
             current_parent_gene_position += 1
 
