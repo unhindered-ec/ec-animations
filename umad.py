@@ -237,7 +237,10 @@ class Umad(Scene):
             for i in range(self.GENOME_LENGTH)
         ]).arrange(RIGHT, buff=self.GENOME_BUFFER)
 
-    def build_gene(self, fill_color: ManimColor, stroke_color: ManimColor, index: int, parent_direction: Optional[Side] = None):
+    def build_gene(self, fill_color: ManimColor, stroke_color: ManimColor,
+                   index: int,
+                   parent_direction: Optional[Side] = None,
+                   label: Optional[VMobject] = None):
         result = VGroup() # create a VGroup
         box = Square(
             side_length=self.GENE_SIDE_LENGTH, fill_color=fill_color, fill_opacity=self.GENE_FILL_OPACITY,
@@ -245,7 +248,10 @@ class Umad(Scene):
         )
         char_text = chr(index + ord('a'))
         suffix = "" if parent_direction is None else "_c"
-        text = MathTex(f"{char_text}{suffix}", font_size=self.GENE_FONT_SIZE).move_to(box.get_center()) # create text
+        if label:
+            text = label.move_to(box.get_center())
+        else:
+            text = MathTex(f"{char_text}{suffix}", font_size=self.GENE_FONT_SIZE).move_to(box.get_center()) # create text
         result.add(box, text) # add both objects to the VGroup
         if parent_direction != None:
             direction = 1 if parent_direction == Side.LEFT else -1
