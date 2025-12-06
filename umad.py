@@ -50,7 +50,7 @@ class Umad(Scene):
     # Titles and labels
     TITLE: str = "UMAD mutation operator"
     TITLE_FONT_SIZE: int = 48
-    SUBTITLE_FONT_SIZE: int = 30
+    TITLE_OFFSET = 0.7
 
     def setup(self):
         """
@@ -80,7 +80,7 @@ class Umad(Scene):
             self.parent_label, self.addition_label, self.deletion_label
         ).to_edge(LEFT)
 
-        title = self.title_text.next_to(labels_and_genes, UP, buff=1.3)
+        title = self.title_text.next_to(labels_and_genes, UP, buff=self.TITLE_OFFSET)
         center = title.get_center()
         center[1] = 0
         title = title.shift(-center)
@@ -120,9 +120,7 @@ class Umad(Scene):
         self.wait(1)
 
     def animate_additions(self):
-        subtitle = "Addition phase"
-        subtitle_text = Text(subtitle, font_size=self.SUBTITLE_FONT_SIZE, slant=ITALIC).next_to(self.title_text, DOWN, buff=0.25)
-        self.add(subtitle_text)
+        self.addition_label.set_opacity(1)
 
         # Make a copy of the parent genes for the addition phase
         self.addition_phase_genes = self.parent_genes.copy().next_to(self.addition_label, RIGHT)
@@ -190,15 +188,10 @@ class Umad(Scene):
         self.addition_phase_genes.arrange(RIGHT, buff=self.GENOME_BUFFER).next_to(self.addition_label, RIGHT)
 
         self.remove(self.arrow)
-
         self.wait(0.25)
 
-        self.remove(subtitle_text)
-
     def animate_deletions(self):
-        subtitle = "Deletion phase"
-        subtitle_text = Text(subtitle, font_size=self.SUBTITLE_FONT_SIZE, slant=ITALIC).next_to(self.title_text, DOWN, buff=0.5)
-        self.add(subtitle_text)
+        self.deletion_label.set_opacity(1)
 
         # Make a copy of the addition phase genes for the deletion phase
         self.deletion_phase_genes = self.addition_phase_genes.copy().next_to(self.deletion_label, RIGHT)
@@ -215,15 +208,9 @@ class Umad(Scene):
                 deleted_gene.set_opacity(0.25)
                 self.play(Transform(gene, deleted_gene))
                 pass
-            else:
-                pass
 
         self.remove(self.arrow)
-
         self.wait(0.25)
-
-        self.remove(subtitle_text)
-        pass
 
     def build_labels_and_initial_genome(self) -> tuple[VGroup, Text, Text, Text]:
         """
@@ -236,8 +223,8 @@ class Umad(Scene):
             A tuple containing the mobjects for parent genes and the three labels.
         """
         parent_label: Text = Text("Parent genes", font_size=self.LABEL_FONT_SIZE)
-        addition_label: Text = Text("Addition", font_size=self.LABEL_FONT_SIZE)
-        deletion_label: Text = Text("Deletion", font_size=self.LABEL_FONT_SIZE)
+        addition_label: Text = Text("Addition", font_size=self.LABEL_FONT_SIZE).set_opacity(0)
+        deletion_label: Text = Text("Deletion", font_size=self.LABEL_FONT_SIZE).set_opacity(0)
         VGroup(parent_label, addition_label, deletion_label).arrange(DOWN, buff=self.GENOMES_VERTICAL_BUFFER)
         # Right aligns all the labels
         addition_label.align_to(parent_label, RIGHT)
