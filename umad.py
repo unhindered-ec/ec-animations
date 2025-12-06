@@ -182,7 +182,12 @@ class Umad(Scene):
 
             self.wait(0.1)
 
-        self.addition_phase_genes = final_addition_phase_genes
+        self.addition_phase_genes: VGroup = VGroup()
+        for index, gene in enumerate(final_addition_phase_genes):
+            gene_copy = self.build_gene(self.PARENT_GENE_COLOR, self.PARENT_STROKE_COLOR, index, label = cast(VMobject, deepcopy(gene[1])))
+            self.addition_phase_genes.add(gene_copy)
+        self.addition_phase_genes.arrange(RIGHT, buff=self.GENOME_BUFFER).next_to(self.addition_label, RIGHT)
+
         self.remove(self.arrow)
 
         self.wait(0.25)
