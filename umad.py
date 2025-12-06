@@ -2,6 +2,7 @@ import random
 from manim import *
 from enum import Enum, auto
 from typing import Optional, cast
+from copy import deepcopy
 
 # Indicates, during the addition phase, at which side of a gene (left or right)
 # we're inserting a new gene.
@@ -202,6 +203,22 @@ class Umad(Scene):
         # Make a copy of the addition phase genes for the deletion phase
         self.deletion_phase_genes = self.addition_phase_genes.copy().next_to(self.deletion_label, RIGHT)
         self.play(TransformFromCopy(self.addition_phase_genes, self.deletion_phase_genes), run_time=self.GENE_COPY_RUN_TIME)
+
+        for index in range(len(self.deletion_phase_genes)):
+            gene = cast(VMobject, self.deletion_phase_genes[index])
+            self.point_to_gene(gene)
+            self.play(Circumscribe(gene), run_time=self.PARENT_GENE_HIGHLIGHT_RUN_TIME)
+
+            delete_here = random.random() < self.DELETION_RATE
+            if delete_here:
+                deleted_gene = gene.copy()
+                deleted_gene.set_opacity(0.25)
+                self.play(Transform(gene, deleted_gene))
+                pass
+            else:
+                pass
+
+        self.remove(self.arrow)
 
         self.wait(0.25)
 
