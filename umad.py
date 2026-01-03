@@ -35,7 +35,7 @@ class Umad(Scene):
     CHILD_ARROW_LENGTH: float = GENE_SIDE_LENGTH / 2
 
     # Layout settings
-    GENOMES_VERTICAL_BUFFER: float = 1
+    GENOMES_VERTICAL_BUFFER: float = 1.1
     LABEL_BUFFER: float = 0.3
     LABEL_FONT_SIZE: int = 36
 
@@ -222,7 +222,7 @@ class Umad(Scene):
         Returns:
             A tuple containing the mobjects for parent genes and the three labels.
         """
-        parent_label: Text = Text("Parent genes", font_size=self.LABEL_FONT_SIZE)
+        parent_label: Text = Text("Parent Genes", font_size=self.LABEL_FONT_SIZE)
         addition_label: Text = Text("Addition", font_size=self.LABEL_FONT_SIZE).set_opacity(0)
         deletion_label: Text = Text("Deletion", font_size=self.LABEL_FONT_SIZE).set_opacity(0)
         VGroup(parent_label, addition_label, deletion_label).arrange(DOWN, buff=self.GENOMES_VERTICAL_BUFFER)
