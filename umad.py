@@ -105,17 +105,9 @@ class Umad(Scene):
         self.animate_additions()
         self.wait(1)
         self.animate_deletions()
+        self.wait(1)
 
-        # parents = [self.parent1_genes, self.parent2_genes]
-        # for index in range(self.GENOME_LENGTH):
-        #     self.point_to_gene(self.parent1_genes[index])
-        #     which_parent = random.choice(parents)
-        #     # Highlight the parent gene chosen for copying
-        #     self.play(Circumscribe(which_parent[index]), run_time=self.PARENT_GENE_HIGHLIGHT_RUN_TIME)
-        #     # Copy the genes for a given gene from the appropriate parent to the child.
-        #     self.copy_gene(index, which_parent, self.child_genes)
-
-        # self.remove(self.arrow)
+        self.finalize_display()
 
         # Final wait
         self.wait(1)
@@ -213,6 +205,16 @@ class Umad(Scene):
 
         self.remove(self.arrow)
         self.wait(0.25)
+
+    def finalize_display(self):
+        # Remove the addition line, moving the deletion line up into its place.
+        self.play(
+            FadeOut(self.addition_label),
+            self.deletion_label.animate.move_to(self.addition_label),
+            FadeOut(self.addition_phase_genes),
+            self.deletion_phase_genes.animate.move_to(self.addition_phase_genes)
+        )
+        pass
 
     def build_labels_and_initial_genome(self) -> tuple[VGroup, Text, Text, Text]:
         """
