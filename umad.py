@@ -182,11 +182,7 @@ class Umad(Scene):
 
             self.wait(0.1)
 
-        self.addition_phase_genes: VGroup = VGroup()
-        for index, gene in enumerate(final_addition_phase_genes):
-            gene_copy = self.build_gene(self.PARENT_GENE_COLOR, self.PARENT_STROKE_COLOR, index, label = cast(VMobject, deepcopy(gene[1])))
-            self.addition_phase_genes.add(gene_copy)
-        self.addition_phase_genes.arrange(RIGHT, buff=self.GENOME_BUFFER).next_to(self.addition_label, RIGHT)
+        self.addition_phase_genes = final_addition_phase_genes
 
         self.remove(self.arrow)
         self.wait(0.25)
@@ -194,8 +190,13 @@ class Umad(Scene):
     def animate_deletions(self):
         self.deletion_label.set_opacity(1)
 
+        self.deletion_phase_genes: VGroup = VGroup()
+        for index, gene in enumerate(self.addition_phase_genes):
+            gene_copy = self.build_gene(self.PARENT_GENE_COLOR, self.PARENT_STROKE_COLOR, index, label = cast(VMobject, deepcopy(gene[1])))
+            self.deletion_phase_genes.add(gene_copy)
+        self.deletion_phase_genes.arrange(RIGHT, buff=self.GENOME_BUFFER).next_to(self.deletion_label, RIGHT)
+
         # Make a copy of the addition phase genes for the deletion phase
-        self.deletion_phase_genes = self.addition_phase_genes.copy().next_to(self.deletion_label, RIGHT)
         self.play(TransformFromCopy(self.addition_phase_genes, self.deletion_phase_genes), run_time=self.GENE_COPY_RUN_TIME)
 
         for index in range(len(self.deletion_phase_genes)):
