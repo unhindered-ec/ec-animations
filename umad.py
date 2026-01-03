@@ -33,6 +33,7 @@ class Umad(Scene):
     CHILD_INITIAL_FILL_COLOR: ManimColor = BLACK
     CHILD_INITIAL_STROKE_COLOR: ManimColor = BLACK
     CHILD_ARROW_LENGTH: float = GENE_SIDE_LENGTH / 2
+    ARROW_BUFF: float = 0.05
 
     # Layout settings
     GENOMES_VERTICAL_BUFFER: float = 1.1
@@ -270,4 +271,4 @@ class Umad(Scene):
         return result
 
     def point_to_gene(self, gene: Mobject):
-        self.play(self.arrow.animate.next_to(gene, UP), run_time=self.ARROW_RUN_TIME)
+        self.play(self.arrow.animate.next_to(gene, UP, buff = self.ARROW_BUFF), run_time=self.ARROW_RUN_TIME)
