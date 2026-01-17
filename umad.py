@@ -257,7 +257,7 @@ class Umad(Scene):
             stroke_color=stroke_color, stroke_width=self.GENE_STROKE_WIDTH
         )
         char_text = chr(index + ord('a'))
-        suffix = "" if parent_direction is None else "_c"
+        suffix = "" if parent_direction is None else "_a"
         if label:
             text = label.move_to(box.get_center())
         else:
