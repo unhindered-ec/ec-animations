@@ -13,8 +13,8 @@ class Side(Enum):
 class Umad(Scene):
     # --- CONFIGURATION ---
     # UMAD settings
-    ADDITION_RATE: float = 0.3
-    DELETION_RATE: float = 0.3
+    ADDITION_RATE: float = 0.6
+    DELETION_RATE: float = 0.7
 
     # Genome settings
     GENOME_LENGTH: int = 5
@@ -69,7 +69,7 @@ class Umad(Scene):
 
         self.title_text = Text(self.TITLE, font_size=self.TITLE_FONT_SIZE)
 
-        random.seed(5)
+        random.seed(9)
 
         super().setup()
 
@@ -189,7 +189,10 @@ class Umad(Scene):
         self.deletion_phase_genes.arrange(RIGHT, buff=self.GENOME_BUFFER).next_to(self.deletion_label, RIGHT)
 
         # Make a copy of the addition phase genes for the deletion phase
-        self.play(TransformFromCopy(self.addition_phase_genes, self.deletion_phase_genes), run_time=self.GENE_COPY_RUN_TIME)
+        addition_phase_genes_copy = self.addition_phase_genes.copy()
+        self.play(Transform(addition_phase_genes_copy, self.deletion_phase_genes), run_time=self.GENE_COPY_RUN_TIME)
+        self.add(self.deletion_phase_genes)
+        self.remove(addition_phase_genes_copy)
 
         for index in range(len(self.deletion_phase_genes)):
             gene = cast(VMobject, self.deletion_phase_genes[index])
@@ -201,7 +204,6 @@ class Umad(Scene):
                 deleted_gene = gene.copy()
                 deleted_gene.set_opacity(0.25)
                 self.play(Transform(gene, deleted_gene))
-                pass
 
         self.remove(self.arrow)
         self.wait(0.25)
